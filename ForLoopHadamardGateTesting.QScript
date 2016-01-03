@@ -1,0 +1,50 @@
+// @author: Austin Forry
+
+//
+// for loop test
+//
+
+k = 0
+
+for j = 1; j < 5; j++
+  k++;
+endfor
+
+_return_value = k
+
+Print _return_value
+
+//
+// experimenting with hadamard gates
+//
+
+// max size for Q-P is 22 qubits
+VectorSize 22
+
+for i = 0; i < 22; i++
+  Display "superposition of states for bit " + i
+  Hadamard i
+  Delay 100
+endfor
+
+for i = 0; i < 22; i++
+  Display "superposition of states for bit " + i
+  Hadamard i
+  Delay 100
+endfor
+
+// smallest size for Q-P is 6 qubits
+VectorSize 6
+
+// loop with delay to see how superpositions are being graphed
+for i = 0; i < 6; i++
+  Display "superposition of states for bit " + i
+  Hadamard i
+  Delay 500
+  Display "applying hadamard gate again to same bit " + i
+  Hadamard i
+  Delay 500
+endfor
+
+Display "test finished"
+Print "test finished"
