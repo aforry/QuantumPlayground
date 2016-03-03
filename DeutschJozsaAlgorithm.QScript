@@ -1,0 +1,58 @@
+// @author:	Austin Forry
+
+//
+// The Deutsch-Jozsa Algorithm determines if a function
+// (the oracle) is constant or balanced.
+// Constant = all qubits are 0s or all qubits are 1s
+// Balanced = half the qubits are 1s or half are 0s
+//
+
+// sources referenced:
+// https://en.wikipedia.org/wiki/Deutsch-Jozsa_algorithm
+// http://kukuruku.co/hub/quantum-computing/quantum-computations-how-to-implement-deutsch-jozsa-algorithm-in-haskell
+// http://www-inst.eecs.berkeley.edu/~cs191/fa05/presentations/Oracle.ppt
+
+// initialization: 6 qubit register, 2D visualization mode
+VectorSize 6
+SetViewMode 0
+
+// flip last qubit (range 0-5) from <|0 to <|1 state
+SigmaX 5
+
+// call hadamard gate operation on all qubits
+proc Hgate
+	for i = 0; i < 6; i++
+  	Hadamard i
+  endfor
+endproc
+
+// an oracle is a "black box" the algorithm relies on
+// theoretical applications don't require the implementation
+// practical applications, such as this code, do
+proc Oracle
+  // perform CNOT logic on qubits using last qubit as control
+  for i = 0; i < 5; i++
+  	CNot i, 5
+  endfor
+  // perform hadamard gate on qubit register
+  Hgate
+endproc
+
+Hgate
+Oracle
+
+// use Measure to determine quantum state
+Measure
+if measured_value == 0  // State 0 = 000000
+  Print "CONSTANT"
+endif
+if measured_value == 63 // State 63 = 111111
+  Print "CONSTANT"
+endif
+
+// algorithm is deterministic, therefore if not constant the result MUST be balanced
+if measured_value != 0
+  if measured_value != 63
+    Print "BALANCED"
+  endif
+endif
