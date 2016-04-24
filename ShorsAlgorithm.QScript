@@ -1,0 +1,65 @@
+//
+//@author: Austin Forry
+//
+
+// This is merely a best attempt at an implementation of Shor's Algorithm
+// I can in no way gauruntee that this is working as expected
+
+// Resources referenced:
+// https://en.wikipedia.org/wiki/Shor%27s_algorithm
+// https://en.wikipedia.org/wiki/Euclidean_algorithm
+
+// Q-P builtin Math and QMath documentation:
+// http://www.quantumplayground.net/#/playground/5090214850592768
+
+
+// initialization: 6 qubit register, 2D visualization mode, set a value N (cannot be a prime power)
+VectorSize 6
+SetViewMode 1
+N = 21
+// some legal values of N: 15, 21
+r = 0
+a = 0
+
+// get factors and return the largest
+proc factorize
+  
+  r = Math.floor((Math.random() * QMath.getWidth(N)))
+  
+  // nontrivial factors
+  f1 = QMath.ipow(a, r / 2) + 1 % N
+  f2 = QMath.ipow(a, r / 2) - 1 % N
+  f1 = QMath.gcd(f1, N)
+  f2 = QMath.gcd(f2, N)
+  
+  if f1 > f2
+    output = f1
+  else
+    output = f2
+  endif
+  
+  Print "Factor found: " + output
+  Display "FINISHED!"
+  
+endproc
+
+// classical part of Shors Algorithm -- could be done on a classical computer
+proc classical N
+  
+  // get random value of 'a' less than N
+  a = Math.floor(Math.random() * N)
+  Print "value of 'a' randomly chosen: " + a
+  
+  // if gcd(a,N) != 1 then a is nontrivial factor and we are done
+  if (QMath.gcd(a,N) != 1)
+  	Print "a is nontrivial, algorithm finished!"
+    Breakpoint
+  endif
+
+  // generate a period, r, and gets result
+  factorize
+  
+endproc
+
+// begin running Shor's Algorithm
+classical N
