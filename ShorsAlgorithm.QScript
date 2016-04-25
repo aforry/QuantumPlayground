@@ -20,21 +20,35 @@ N = 21
 // some legal values of N: 15, 21
 r = 0
 a = 0
+c = 0
 
 // get factors and return the largest
-proc factorize
+proc factorize a
   
-  // generate period, r (cannot be odd)
+  // generate period, r
+  // borrowed from the QP implementation based on quantumlib
+  // http://www.quantumplayground.net/#/playground/5191954035900416
+  for trycnt = 100; trycnt >= 0; trycnt--
+    Measure
+    c = measured_value
+  endfor
+  
+  temp = QMath.fracApprox(c, 1 << QMath.getWidth(N), QMath.getWidth(N))
+  r = temp[1]
+  
+  // r cannot be odd
   for i = 0; i < 1; i
-  	r = Math.floor((Math.random() * QMath.getWidth(N)))
     if ((r % 2) == 1)
       i = 0
+      r = r*2
     else
       i = 1
    	endif
   endfor
   
-  // nontrivial factors
+  Print "value of period 'r' chosen: " + r
+  
+  // calculate factors
   f1 = QMath.ipow(a, r / 2) + 1 % N
   f2 = QMath.ipow(a, r / 2) - 1 % N
   f1 = QMath.gcd(f1, N)
@@ -46,13 +60,21 @@ proc factorize
     output = f2
   endif
   
-  Print "Factor found: " + output
+  // One and N are trivial factors, i.e. any number can be factored by itself or one
+  if(output > 1) && (output < N)
+  	Print "Nontrivial Factor found: " + output + ". SUCCESS!"
+  else
+    Print "Trivial Factor found: " + output + ". TRY AGAIN!"
+  endif
+  
   Display "FINISHED!"
   
 endproc
 
 // classical part of Shors Algorithm -- could be done on a classical computer
 proc classical N
+  
+  Print "Value 'N': " + N
   
   // get random value of 'a' less than N
   a = Math.floor(Math.random() * N)
@@ -65,7 +87,7 @@ proc classical N
   endif
 
   // generate a period, r, and gets result
-  factorize
+  factorize a
   
 endproc
 
